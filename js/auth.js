@@ -100,13 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
         }
 
-        // Button Animation before redirect
+// Button Animation before redirect
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
         
         setTimeout(() => {
-            // Redirect to homepage (which we will build next)
-            // window.location.href = 'home.html'; 
-            alert(`Login successful! Admin Mode: ${isAdmin}`);
+            // This actually redirects you to the main dashboard!
+            window.location.href = 'home.html'; 
         }, 1500);
     });
 });
