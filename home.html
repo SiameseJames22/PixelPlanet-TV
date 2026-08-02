@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - PixelPlanet TV</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/home.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar glass-card">
+            <div class="sidebar-header">
+                <h2 class="brand-logo">PixelPlanet <span>TV</span></h2>
+                <i class="fa-solid fa-bars" id="menuToggle"></i>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="active"><a href="home.html"><i class="fa-solid fa-house"></i> <span>Home</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-compass"></i> <span>For You</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-fire"></i> <span>Trending</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-layer-group"></i> <span>Categories</span></a></li>
+            </ul>
+
+            <div class="nav-divider">Library</div>
+            <ul class="nav-menu">
+                <li><a href="#"><i class="fa-solid fa-list-ul"></i> <span>Playlists</span></a></li>
+                <li><a href="#"><i class="fa-regular fa-clock"></i> <span>Watch Later</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-thumbs-up"></i> <span>Liked</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> <span>History</span></a></li>
+            </ul>
+
+            <!-- Admin Section (Hidden by default) -->
+            <div class="nav-divider admin-only" style="display: none; color: #ff4757;">Admin Tools</div>
+            <ul class="nav-menu admin-only" style="display: none;">
+                <li><a href="#" style="color: #ff4757;"><i class="fa-solid fa-upload"></i> <span>Uploads</span></a></li>
+                <li><a href="#" style="color: #ff4757;"><i class="fa-solid fa-hammer"></i> <span>Admin Panel</span></a></li>
+            </ul>
+
+            <div class="sidebar-footer nav-menu">
+                <li><a href="#"><i class="fa-solid fa-gear"></i> <span>Settings</span></a></li>
+                <li><a href="#" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></a></li>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar glass-card">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search videos, categories, or users...">
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+                    <div class="profile-dropdown">
+                        <img src="https://ui-avatars.com/api/?name=User&background=6c5ce7&color=fff" alt="Profile" class="profile-pic" id="topbarProfilePic">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hero/Featured Section -->
+            <section class="hero-banner">
+                <div class="hero-content">
+                    <span class="badge">New This Week</span>
+                    <h1 id="heroTitle">Cyberpunk: Edge of the Web</h1>
+                    <p id="heroDesc">Dive into the neon-lit streets of the future. The most anticipated upload of the month is finally here in stunning 4K.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary" onclick="openPlayer()"><i class="fa-solid fa-play"></i> Play Now</button>
+                        <button class="btn-secondary"><i class="fa-solid fa-plus"></i> Watch Later</button>
+                    </div>
+                </div>
+                <div class="hero-overlay"></div>
+                <img src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2000&auto=format&fit=crop" class="hero-bg" alt="Hero Background">
+            </section>
+
+            <!-- Dynamic Video Rows Container -->
+            <div id="videoRowsContainer">
+                <!-- Javascript will populate rows here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Video Player Modal -->
+    <div id="playerModal" class="player-modal hidden">
+        <div class="player-container glass-card">
+            <div class="player-header">
+                <h3 id="playerTitle">Video Title</h3>
+                <button class="icon-btn close-player" onclick="closePlayer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="video-wrapper">
+                <!-- HTML5 Video Element (For Option 1) -->
+                <video id="mainVideoPlayer" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" playsinline></video>
+                
+                <!-- YouTube Iframe (For Option 2 - Hidden initially) -->
+                <div id="ytPlayerContainer" class="hidden"></div>
+
+                <!-- Custom Player Controls Overlay -->
+                <div class="custom-controls">
+                    <div class="progress-container">
+                        <div class="progress-bar"><div class="progress-filled"></div></div>
+                    </div>
+                    <div class="controls-main">
+                        <div class="controls-left">
+                            <button class="control-btn" id="playPauseBtn"><i class="fa-solid fa-play"></i></button>
+                            <button class="control-btn" id="nextBtn"><i class="fa-solid fa-forward-step"></i></button>
+                            <div class="volume-container">
+                                <button class="control-btn" id="muteBtn"><i class="fa-solid fa-volume-high"></i></button>
+                                <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
+                            </div>
+                            <span class="time-display">0:00 / 10:00</span>
+                        </div>
+                        <div class="controls-right">
+                            <button class="control-btn tooltip" data-tip="Quality"><i class="fa-solid fa-gear"></i></button>
+                            <button class="control-btn tooltip" data-tip="Picture-in-Picture"><i class="fa-regular fa-window-restore"></i></button>
+                            <button class="control-btn tooltip" data-tip="Theatre Mode"><i class="fa-solid fa-tv"></i></button>
+                            <button class="control-btn" id="fullscreenBtn"><i class="fa-solid fa-expand"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Actions (Below Player) -->
+            <div class="video-actions-bar">
+                <div class="uploader-info">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=ff4757&color=fff" alt="Channel" class="channel-pic">
+                    <div>
+                        <h4 style="margin:0;">PixelPlanet Originals</h4>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">1.2M Subscribers</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn"><i class="fa-regular fa-thumbs-up"></i> 12K</button>
+                    <button class="action-btn"><i class="fa-regular fa-thumbs-down"></i></button>
+                    <button class="action-btn"><i class="fa-solid fa-share"></i> Share</button>
+                    <button class="action-btn"><i class="fa-solid fa-plus"></i> Save</button>
+                    <button class="action-btn admin-only hidden" style="color:var(--accent-color); border: 1px solid var(--accent-color);"><i class="fa-solid fa-download"></i> Admin DL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/home.js"></script>
+    <script src="js/player.js"></script>
+</body>
+</html>
