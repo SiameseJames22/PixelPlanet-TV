@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPlanet TV - Stream Your World</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <h1 class="brand-logo">PixelPlanet <span>TV</span></h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Browse</a></li>
+            <li><a href="#">My List</a></li>
+            <li><a href="#">Support</a></li>
+        </ul>
+        <button class="btn-primary pill-btn" id="navSignInBtn">Sign In</button>
+    </nav>
+
+    <!-- Main Authentication Container -->
+    <main class="auth-wrapper">
+        <div class="glass-card auth-card">
+            <div class="card-header">
+                <h2 class="brand-logo-large">PixelPlanet <span>TV</span></h2>
+                <p id="authSubtitle">Welcome back!</p>
+            </div>
+
+            <form id="authForm" class="auth-form">
+                <!-- Username (Hidden on Login) -->
+                <div class="input-group signup-only" style="display: none;">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="username" placeholder="Choose a username">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="email" placeholder="your@email.com" required>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <i class="fa-solid fa-eye eye-icon" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <!-- Confirm Password (Hidden on Login) -->
+                <div class="input-group signup-only" style="display: none;">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="confirmPassword" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <!-- Profile Picture (Hidden on Login) -->
+                <div class="input-group signup-only" style="display: none;">
+                    <label for="profilePic">Profile Picture</label>
+                    <div class="input-wrapper file-wrapper">
+                        <i class="fa-solid fa-image"></i>
+                        <input type="file" id="profilePic" accept="image/png, image/jpeg">
+                    </div>
+                </div>
+
+                <!-- Extra Options -->
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe"> Remember Me
+                    </label>
+                    <a href="#" class="forgot-link login-only">Forgot password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary full-width" id="submitBtn">Sign In</button>
+            </form>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Social Logins -->
+            <div class="social-login">
+                <button class="btn-social">
+                    <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continue with Google
+                </button>
+                <button class="btn-social">
+                    <i class="fa-brands fa-discord" style="color: #5865F2;"></i> Continue with Discord
+                </button>
+            </div>
+
+            <!-- Toggle Auth State -->
+            <div class="auth-footer">
+                <p id="toggleText">Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
