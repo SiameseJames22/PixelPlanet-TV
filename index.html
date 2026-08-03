@@ -1,14 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- FORCED AUTH STYLES TO FIX SQUASHED LAYOUT -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPlanet TV - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Base Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #0f0f16; 
+            color: white; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+        }
+
+        /* Fixed Navbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background: transparent;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem; /* Spaces logo from links */
+        }
+        .nav-left h2 { color: white; font-weight: bold; }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem; /* Spaces out the tabs */
+        }
+        .nav-links a {
+            color: #a0a0b0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: white; }
+
+        /* Auth Card Layout */
         .auth-wrapper {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 4rem 2rem;
-            width: 100%;
+            padding: 2rem;
         }
         .auth-card {
             width: 100%;
@@ -17,19 +59,15 @@
             background: #1a1a24;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            display: flex !important;
-            flex-direction: column !important; /* Forces vertical stacking */
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .auth-form {
-            display: flex !important;
-            flex-direction: column !important; /* Forces inputs to stack */
+            display: flex;
+            flex-direction: column;
             gap: 1.25rem;
-        }
-        .social-login {
-            display: flex !important;
-            flex-direction: column !important; /* Forces buttons to stack */
-            gap: 0.75rem;
         }
         .input-group label {
             display: block;
@@ -42,7 +80,7 @@
             display: flex;
             align-items: center;
         }
-        .input-wrapper i {
+        .input-wrapper i.fa-solid:not(.eye-icon) {
             position: absolute;
             left: 1rem;
             color: #a0a0b0;
@@ -54,8 +92,20 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
             color: white;
-            box-sizing: border-box;
+            font-size: 1rem;
+            outline: none;
         }
+        .input-wrapper input:focus {
+            border-color: #6c5ce7;
+        }
+        .eye-icon {
+            position: absolute;
+            right: 1rem;
+            color: #a0a0b0;
+            cursor: pointer;
+        }
+        
+        /* Buttons */
         .btn-primary {
             background: #6c5ce7;
             color: white;
@@ -63,196 +113,121 @@
             padding: 1rem;
             border-radius: 6px;
             font-weight: bold;
+            font-size: 1rem;
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #5a4bcf; }
+        
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
         .btn-social {
             background: #252530;
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
-            padding: 0.75rem;
+            padding: 0.85rem;
             border-radius: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
             cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
         }
+        .btn-social:hover { background: #2f2f3d; }
+
+        /* Extras */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #a0a0b0;
+            font-size: 0.75rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .divider span { padding: 0 10px; }
+        
         .auth-footer {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #a0a0b0;
         }
         .accent-link {
             color: #6c5ce7;
             cursor: pointer;
+            font-weight: bold;
         }
     </style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelPlanet TV - Stream Your World</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="dark-mode">
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="logo-container">
-            <h1 class="brand-logo">PixelPlanet <span>TV</span></h1>
+<body>
+
+    <!-- Fixed Navbar -->
+    <nav class="topbar">
+        <div class="nav-left">
+            <h2>PixelPlanet TV</h2>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Browse</a>
+                <a href="#">My List</a>
+                <a href="#">Support</a>
+            </div>
         </div>
-        <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Browse</a></li>
-            <li><a href="#">My List</a></li>
-            <li><a href="#">Support</a></li>
-        </ul>
-        <button class="btn-primary pill-btn" id="navSignInBtn">Sign In</button>
     </nav>
 
-    <!-- Main Authentication Container -->
-   <div class="auth-wrapper">
-    <div class="auth-card">
-        <div class="card-header">
-            <h1 class="brand-logo-large">PixelPlanet TV</h1>
-            <p id="authSubtitle">Welcome back!</p>
-        </div>
-
-        <form id="authForm" class="auth-form">
-            <!-- Username (Sign Up Only) -->
-            <div class="input-group signup-only" style="display: none;">
-                <label for="username">Username</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" id="username" placeholder="Choose a username">
-                </div>
-                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.4rem;">We will never ask for your real name!</p>
+    <!-- Cleaned up Auth Wrapper -->
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div style="text-align: center;">
+                <h1 style="margin-bottom: 5px; font-size: 1.8rem;">PixelPlanet TV</h1>
+                <p id="authSubtitle" style="color: #a0a0b0; font-size: 0.9rem;">Welcome back!</p>
             </div>
 
-            <!-- Email (Both) -->
-            <div class="input-group">
-                <label for="email">Email</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="email" placeholder="Enter your email" required>
-                </div>
-            </div>
-
-            <!-- Password (Both) -->
-            <div class="input-group">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                    <i class="fa-solid fa-eye eye-icon" id="togglePassword"></i>
-                </div>
-            </div>
-
-            <!-- Confirm Password (Sign Up Only) -->
-            <div class="input-group signup-only" style="display: none;">
-                <label for="confirmPassword">Confirm Password</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="confirmPassword" placeholder="Confirm your password">
-                </div>
-            </div>
-
-            <!-- Remember Me / Forgot Password (Login Only) -->
-            <div class="auth-options login-only">
-                <label class="remember-me">
-                    <input type="checkbox" id="rememberMe"> Remember Me
-                </label>
-                <a href="#" class="forgot-link">Forgot password?</a>
-            </div>
-
-            <button type="submit" id="submitBtn" class="btn-primary full-width" style="padding: 0.85rem; background: var(--accent-color); border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; margin-top: 10px;">Sign In</button>
-        </form>
-
-        <div class="divider">
-            <span>OR</span>
-        </div>
-
-        <div class="social-login">
-            <button class="btn-social">
-                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continue with Google
-            </button>
-            <button class="btn-social">
-                <i class="fa-brands fa-discord" style="color: #5865F2;"></i> Continue with Discord
-            </button>
-        </div>
-
-        <!-- Keep this exact formatting on one line for the JS to work properly -->
-        <div class="auth-footer" id="toggleText">Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span></div>
-    </div>
-</div>
-
-         <!-- Username (Hidden on Login) -->
+            <form id="authForm" class="auth-form">
+                <!-- Username (Hidden by default) -->
                 <div class="input-group signup-only" style="display: none;">
-                    <label for="username">Username</label>
+                    <label>Username</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
                         <input type="text" id="username" placeholder="Choose a username">
                     </div>
-                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.4rem;">We will never ask for your real name!</p>
-                </div>
                 </div>
 
                 <!-- Email -->
                 <div class="input-group">
-                    <label for="email">Email</label>
+                    <label>Email</label>
                     <div class="input-wrapper">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="email" id="email" placeholder="your@email.com" required>
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Enter your email" required>
                     </div>
                 </div>
 
                 <!-- Password -->
                 <div class="input-group">
-                    <label for="password">Password</label>
+                    <label>Password</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="password" placeholder="••••••••" required>
+                        <input type="password" id="password" placeholder="Enter your password" required>
                         <i class="fa-solid fa-eye eye-icon" id="togglePassword"></i>
                     </div>
                 </div>
 
-                <!-- Confirm Password (Hidden on Login) -->
-                <div class="input-group signup-only" style="display: none;">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="confirmPassword" placeholder="••••••••">
-                    </div>
-                </div>
-
-                <!-- Profile Picture (Hidden on Login) -->
-                <div class="input-group signup-only" style="display: none;">
-                    <label for="profilePic">Profile Picture</label>
-                    <div class="input-wrapper file-wrapper">
-                        <i class="fa-solid fa-image"></i>
-                        <input type="file" id="profilePic" accept="image/png, image/jpeg">
-                    </div>
-                </div>
-
-                <!-- Extra Options -->
-                <div class="auth-options">
-                    <label class="remember-me">
-                        <input type="checkbox" id="rememberMe"> Remember Me
-                    </label>
-                    <a href="#" class="forgot-link login-only">Forgot password?</a>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn-primary full-width" id="submitBtn">Sign In</button>
+                <button type="submit" id="submitBtn" class="btn-primary">Sign In</button>
             </form>
 
             <div class="divider">
                 <span>OR</span>
             </div>
 
-            <!-- Social Logins -->
             <div class="social-login">
                 <button class="btn-social">
                     <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continue with Google
@@ -262,15 +237,13 @@
                 </button>
             </div>
 
-            <!-- Toggle Auth State -->
-            <div class="auth-footer">
-                <p id="toggleText">Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span></p>
+            <div class="auth-footer" id="toggleText">
+                Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span>
             </div>
         </div>
-    </main>
-    
+    </div>
 
-<script src="js/nav.js"></script>
+    <!-- Script that makes it all work -->
     <script src="js/auth.js"></script>
 </body>
 </html>
