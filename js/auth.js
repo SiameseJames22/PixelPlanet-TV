@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
+    const toggleText = document.getElementById('toggleText');
     const toggleAuthModeBtn = document.getElementById('toggleAuthMode');
     const authSubtitle = document.getElementById('authSubtitle');
-    const toggleText = document.getElementById('toggleText');
     const submitBtn = document.getElementById('submitBtn');
     const authForm = document.getElementById('authForm');
     const togglePassword = document.getElementById('togglePassword');
@@ -22,90 +22,108 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // Toggle Password Visibility
-    togglePassword.addEventListener('click', () => {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        togglePassword.classList.toggle('fa-eye-slash');
-    });
+    if (togglePassword) {
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.classList.toggle('fa-eye-slash');
+        });
+    }
 
-    // Toggle Between Login and Sign Up
-    toggleAuthModeBtn.addEventListener('click', () => {
-        isLoginMode = !isLoginMode;
+    // Toggle Between Login and Sign Up (Safely updating text without destroying the element)
+    if (toggleAuthModeBtn) {
+        toggleAuthModeBtn.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
 
-        if (isLoginMode) {
-            authSubtitle.textContent = "Welcome back!";
-            submitBtn.textContent = "Sign In";
-            toggleText.innerHTML = `Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span>`;
-            
-            signupOnlyFields.forEach(field => field.style.display = 'none');
-            loginOnlyFields.forEach(field => field.style.display = 'block');
-        } else {
-            authSubtitle.textContent = "Create an account to start watching.";
-            submitBtn.textContent = "Sign Up";
-            toggleText.innerHTML = `Already have an account? <span class="accent-link" id="toggleAuthMode">Sign In</span>`;
-            
-            signupOnlyFields.forEach(field => {
-                field.style.display = 'block';
-                field.style.animation = 'fadeIn 0.4s ease-out forwards';
-            });
-            loginOnlyFields.forEach(field => field.style.display = 'none');
-        }
-
-        // Re-attach listener due to innerHTML replacement
-        document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthModeBtn.click);
-    });
+            if (isLoginMode) {
+                authSubtitle.textContent = "Welcome back!";
+                submitBtn.textContent = "Sign In";
+                toggleText.firstChild.textContent = "Don't have an account? ";
+                toggleAuthModeBtn.textContent = "Sign Up";
+                
+                signupOnlyFields.forEach(field => field.style.display = 'none');
+                loginOnlyFields.forEach(field => field.style.display = 'block');
+            } else {
+                authSubtitle.textContent = "Create an account to start watching.";
+                submitBtn.textContent = "Sign Up";
+                toggleText.firstChild.textContent = "Already have an account? ";
+                toggleAuthModeBtn.textContent = "Sign In";
+                
+                signupOnlyFields.forEach(field => {
+                    field.style.display = 'block';
+                    field.style.animation = 'fadeIn 0.4s ease-out forwards';
+                });
+                loginOnlyFields.forEach(field => field.style.display = 'none');
+            }
+        });
+    }
 
     // Handle Form Submission
-    authForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value.trim().toLowerCase();
-        const password = document.getElementById('password').value;
-        const rememberMe = document.getElementById('rememberMe').checked;
+    if (authForm) {
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe') ? document.getElementById('rememberMe').checked : false;
 
-        // Basic validation
-        if(email === '' || password === '') {
-            alert('Please fill out all required fields.');
-            return;
-        }
-
-        if (!isLoginMode) {
-            const username = document.getElementById('username').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            if (password !== confirm) {
-                alert("Passwords do not match!");
+            // Basic validation
+            if (email === '' || password === '') {
+                alert('Please fill out all required fields.');
                 return;
             }
-            // In a real scenario, this is where you'd send data to Firebase Auth
-            console.log("Registering user:", username);
-        }
 
-        // Check if user is an Administrator
-        let isAdmin = false;
-        if (ADMIN_EMAILS.includes(email)) {
-            isAdmin = true;
-            console.log("Administrator Access Granted.");
-        }
+            // Sign-up Specific Logic
+            if (!isLoginMode) {
+                const usernameInput = document.getElementById('username');
+                const username = usernameInput ? usernameInput.value.trim() : '';
+                const confirmInput = document.getElementById('confirmPassword');
+                const confirm = confirmInput ? confirmInput.value : '';
+                
+                // Mock "Taken Username" check
+                const takenUsernames = ['admin', 'pixelplanet', 'james', 'robloxworld'];
+                if (takenUsernames.includes(username.toLowerCase())) {
+                    alert("That username is already taken! Please choose another one.");
+                    return;
+                }
 
-        // Save session locally
-        const userSession = {
-            email: email,
-            isAdmin: isAdmin,
-            theme: 'dark' // Default theme setting
-        };
+                if (password !== confirm) {
+                    alert("Passwords do not match!");
+                    return;
+                }
+                
+                // Save username for the profile picture later
+                localStorage.setItem('pixelPlanetUsername', username);
+                console.log("Registering user:", username);
+            }
 
-        if (rememberMe) {
-            localStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
-        } else {
-            sessionStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
-        }
+            // Check if user is an Administrator
+            let isAdmin = false;
+            if (ADMIN_EMAILS.includes(email)) {
+                isAdmin = true;
+                console.log("Administrator Access Granted.");
+            }
 
-// Button Animation before redirect
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
-        
-        setTimeout(() => {
-            // This actually redirects you to the main dashboard!
-            window.location.href = 'home.html'; 
-        }, 1500);
-    });
+            // Save session locally
+            const userSession = {
+                email: email,
+                isAdmin: isAdmin,
+                theme: 'dark' // Default theme setting
+            };
+
+            if (rememberMe) {
+                localStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
+            } else {
+                sessionStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
+            }
+
+            // Button Animation before redirect
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            
+            setTimeout(() => {
+                // Redirects to the main dashboard
+                window.location.href = 'home.html'; 
+            }, 1500);
+        });
+    }
 });
