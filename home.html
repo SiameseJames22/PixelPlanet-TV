@@ -7,11 +7,48 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Dropdown Styles Guaranteed to Load */
+        .dropdown-menu {
+            position: absolute;
+            top: 130%;
+            right: 0;
+            background: #1a1a24;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 1000;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.2s ease;
+        }
+        .dropdown-menu.hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1.2rem;
+            color: #a0a0b0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+        .dropdown-item i { width: 20px; text-align: center; }
+    </style>
 </head>
 <body class="dark-mode">
 
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- FIXED SIDEBAR: No bottom bars -->
         <nav class="sidebar glass-card">
             <div class="sidebar-header">
                 <h2 class="brand-logo">PixelPlanet <span>TV</span></h2>
@@ -33,22 +70,17 @@
                 <li><a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> <span>History</span></a></li>
             </ul>
 
-            <!-- Admin Section (Hidden by default) -->
+            <!-- Admin Section -->
             <div class="nav-divider admin-only" style="display: none; color: #ff4757;">Admin Tools</div>
             <ul class="nav-menu admin-only" style="display: none;">
                 <li><a href="uploads.html" style="color: #ff4757;"><i class="fa-solid fa-upload"></i> <span>Uploads</span></a></li>
                 <li><a href="admin.html" style="color: #ff4757;"><i class="fa-solid fa-hammer"></i> <span>Admin Panel</span></a></li>
             </ul>
-
-            <div class="sidebar-footer nav-menu">
-                <li><a href="settings.html"><i class="fa-solid fa-gear"></i> <span>Settings</span></a></li>
-                <!-- Sign out moved to Profile Dropdown, but leaving here if sidebar collapses -->
-            </div>
         </nav>
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Topbar -->
+            <!-- Topbar with new dropdowns -->
             <header class="topbar glass-card">
                 <div class="search-container">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -63,7 +95,7 @@
                             <span id="notifDot" style="position: absolute; top: 0; right: 2px; width: 10px; height: 10px; background: #ff4757; border-radius: 50%; border: 2px solid var(--bg-color);"></span>
                         </button>
                         <div id="notifDropdown" class="dropdown-menu hidden">
-                            <p style="padding: 1.5rem 1rem; text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Nothing Specials Happening.. Sorry :(</p>
+                            <p style="padding: 1.5rem 1rem; text-align: center; color: #a0a0b0; font-size: 0.9rem; margin: 0;">Nothing Specials Happening.. Sorry :(</p>
                         </div>
                     </div>
                     
@@ -71,11 +103,10 @@
                     <div style="position: relative;">
                         <img src="" alt="Profile" class="profile-pic" id="topbarProfilePic" style="cursor: pointer;">
                         <div id="profileDropdown" class="dropdown-menu hidden">
-                            <div class="dropdown-header" style="display: flex; align-items: center; gap: 10px; padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <img src="" alt="Profile" id="dropdownProfilePic" style="width: 45px; height: 45px; border-radius: 50%;">
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <img src="" alt="Profile" id="dropdownProfilePic" style="width: 40px; height: 40px; border-radius: 50%;">
                                 <div>
                                     <p id="dropdownUsername" style="font-weight: bold; margin: 0; font-size: 1rem;">Username</p>
-                                    <p id="dropdownRole" style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">Member</p>
                                 </div>
                             </div>
                             <ul style="list-style: none; padding: 0.5rem 0; margin: 0;">
@@ -91,55 +122,26 @@
 
             <!-- Hero Section -->
             <section class="hero-banner">
-                <!-- Hero content remains the same... -->
                 <div class="hero-content">
                     <span class="badge">New This Week</span>
                     <h1 id="heroTitle">Cyberpunk: Edge of the Web</h1>
                     <p id="heroDesc">Dive into the neon-lit streets of the future. The most anticipated upload of the month is finally here in stunning 4K.</p>
                     <div class="hero-buttons">
                         <button class="btn-primary" onclick="openPlayer()"><i class="fa-solid fa-play"></i> Play Now</button>
-                        <button class="btn-secondary"><i class="fa-solid fa-plus"></i> Watch Later</button>
                     </div>
                 </div>
                 <div class="hero-overlay"></div>
                 <img src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2000&auto=format&fit=crop" class="hero-bg" alt="Hero Background">
             </section>
 
-            <!-- Dynamic Video Rows Container -->
+            <!-- Ghost Town / Videos Container -->
             <div id="videoRowsContainer">
-                <!-- Javascript will populate rows or show Ghost Town here -->
+                <!-- JS will inject Ghost Town or 5 Categories here -->
             </div>
         </main>
     </div>
 
-    <!-- Video Modal Remains Same -->
-    <div id="playerModal" class="player-modal hidden">
-         <div class="player-container glass-card">
-            <div class="player-header">
-                <h3 id="playerTitle">Video Title</h3>
-                <button class="icon-btn close-player" onclick="closePlayer()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="video-wrapper">
-                <video id="mainVideoPlayer" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" playsinline></video>
-                <div class="custom-controls">
-                    <div class="progress-container"><div class="progress-bar"><div class="progress-filled"></div></div></div>
-                    <div class="controls-main">
-                        <div class="controls-left">
-                            <button class="control-btn" id="playPauseBtn"><i class="fa-solid fa-play"></i></button>
-                            <span class="time-display">0:00 / 10:00</span>
-                        </div>
-                        <div class="controls-right">
-                            <button class="control-btn" id="fullscreenBtn"><i class="fa-solid fa-expand"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="js/nav.js"></script>
     <script src="js/home.js"></script>
-    <script src="js/player.js"></script>
 </body>
 </html>
