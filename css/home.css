@@ -551,3 +551,46 @@
     cursor: pointer;
     accent-color: var(--accent-color);
 }
+
+/* --- Dropdown Menus --- */
+.dropdown-menu {
+    position: absolute;
+    top: 125%;
+    right: 0;
+    background: #1a1a24;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    width: 250px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    z-index: 100;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dropdown-menu.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.8rem 1.2rem;
+    color: #a0a0b0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: white;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
