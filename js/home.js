@@ -1,140 +1,103 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. Authentication & Admin Check ---
+    // 1. Session Check & Profile Setup
     const userDataStr = localStorage.getItem('pixelPlanetUser') || sessionStorage.getItem('pixelPlanetUser');
+    if (!userDataStr) { window.location.href = 'index.html'; return; }
     
-    if (!userDataStr) {
-        // Not logged in, send back to login
-        window.location.href = 'index.html';
-        return;
-    }
-
     const userData = JSON.parse(userDataStr);
-    
-    // Set Profile Picture initial based on email
-    const username = userData.email.split('@')[0];
-    document.getElementById('topbarProfilePic').src = `https://ui-avatars.com/api/?name=${username}&background=6c5ce7&color=fff`;
+    let displayUsername = localStorage.getItem('pixelPlanetUsername') || userData.email.split('@')[0];
+    const firstLetter = displayUsername.charAt(0).toUpperCase();
+    const avatarUrl = `https://ui-avatars.com/api/?name=${firstLetter}&background=6c5ce7&color=fff&font-size=0.5&bold=true`;
 
-    // Unlock Admin Features
+    // Populate Images and Text
+    document.getElementById('topbarProfilePic').src = avatarUrl;
+    document.getElementById('dropdownProfilePic').src = avatarUrl;
+    document.getElementById('dropdownUsername').textContent = displayUsername;
+    document.getElementById('dropdownRole').textContent = userData.isAdmin ? 'Administrator' : 'Member';
+
     if (userData.isAdmin) {
-        const adminElements = document.querySelectorAll('.admin-only');
-        adminElements.forEach(el => {
-            el.style.display = 'block';
-            el.classList.remove('hidden'); // For buttons
-        });
-        console.log("Admin privileges active.");
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
     }
 
-    // Logout Logic
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+    // 2. Dropdown Logic (Notifications & Profile)
+    const notifToggle = document.getElementById('notifToggle');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifDot = document.getElementById('notifDot');
+    
+    const profileToggle = document.getElementById('topbarProfilePic');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    // Toggle Notifications
+    notifToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('hidden');
+        profileDropdown.classList.add('hidden'); // Close the other one
+        if (notifDot) notifDot.style.display = 'none'; // Clear notification dot
+    });
+
+    // Toggle Profile
+    profileToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+        notifDropdown.classList.add('hidden'); // Close the other one
+    });
+
+    // Close dropdowns if clicking anywhere else
+    document.addEventListener('click', () => {
+        notifDropdown.classList.add('hidden');
+        profileDropdown.classList.add('hidden');
+    });
+
+    // Logout Action
+    document.getElementById('dropdownLogout').addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('pixelPlanetUser');
         sessionStorage.removeItem('pixelPlanetUser');
         window.location.href = 'index.html';
     });
 
+    // 3. Video Rendering Logic ("Ghost Town" vs Categories)
+    // When you start adding videos via Admin panel, this array will hold them. 
+    // Right now it's empty, which triggers the Ghost Town.
+    const activeVideos = []; 
+    const recentlyWatchedVideoName = "Cyberpunk: Edge of the Web"; // Dynamic variable for later
 
-    // --- 2. Dynamic Video Data Generation ---
-    // In a real app, this data would come from Firebase Firestore
-    const mockVideos = [
-        { id: 'v1', title: "Building a Custom PC in 2026", user: "TechMaster", views: "1.2M", time: "2 days ago", thumb: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&auto=format", duration: "14:20", progress: 0 },
-        { id: 'v2', title: "Surviving 100 Days in Minecraft Hardcore", user: "BlockKing", views: "4.5M", time: "1 week ago", thumb: "https://images.unsplash.com/photo-1607513746994-51f730a44832?w=500&auto=format", duration: "1:42:10", progress: 45 },
-        { id: 'v3', title: "Why The Metaverse Failed", user: "DigitalDoc", views: "890K", time: "3 hours ago", thumb: "https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?w=500&auto=format", duration: "22:15", progress: 0 },
-        { id: 'v4', title: "The Best Speedrun Ever", user: "SpeedyGamer", views: "2.1M", time: "5 days ago", thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format", duration: "55:01", progress: 0 },
-        { id: 'v5', title: "Lofi Hip Hop Radio - Beats to Relax/Study to", user: "ChillVibes", views: "15K watching", time: "LIVE", thumb: "https://images.unsplash.com/photo-1516280440502-a28a38a719c8?w=500&auto=format", duration: "LIVE", progress: 0 },
-        { id: 'v6', title: "Top 10 Horror Games of the Year", user: "ScareTactics", views: "650K", time: "1 month ago", thumb: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500&auto=format", duration: "18:40", progress: 0 }
-    ];
-
-    const rowsConfig = [
-        { title: "Continue Watching", type: "history" },
-        { title: `Daily "For You"`, type: "mixed" },
-        { title: "Trending", type: "popular" },
-        { title: "Recently Uploaded", type: "new" },
-        { title: "Because You Watched Minecraft", type: "category" }
-    ];
-
-    const container = document.getElementById('videoRowsContainer');
-
-    rowsConfig.forEach((row, index) => {
-        // Shuffle videos for variety
-        const shuffled = [...mockVideos].sort(() => 0.5 - Math.random());
+    const renderVideos = () => {
+        const container = document.getElementById('videoRowsContainer');
         
-        const rowHTML = `
-            <div class="video-row-container">
-                <div class="row-header">
-                    <h2 class="row-title">${row.title}</h2>
-                    <div style="display:flex; gap:0.5rem;">
-                        <button class="scroll-btn" onclick="scrollRow('row-${index}', -300)"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button class="scroll-btn" onclick="scrollRow('row-${index}', 300)"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
+        // EMPTY STATE
+        if (activeVideos.length === 0) {
+            container.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 350px; color: var(--text-secondary); font-size: 1.3rem; font-weight: bold; letter-spacing: 0.5px;">
+                    Its a ghost town around here..
                 </div>
-                <div class="video-row" id="row-${index}">
-                    ${shuffled.map(vid => `
-                        <div class="video-card" onclick="openPlayer('${vid.title}')">
-                            <div class="thumbnail-container">
-                                <img src="${vid.thumb}" loading="lazy" alt="${vid.title}">
-                                <span class="duration">${vid.duration}</span>
-                                ${row.type === 'history' || vid.progress > 0 ? `<div class="progress-bar-mini"><div class="progress-mini-filled" style="width: ${vid.progress || Math.random()*80}%;"></div></div>` : ''}
-                            </div>
-                            <div class="video-info">
-                                <img src="https://ui-avatars.com/api/?name=${vid.user}&background=random" class="uploader-pic">
-                                <div class="video-details">
-                                    <h4>${vid.title}</h4>
-                                    <p>${vid.user}</p>
-                                    <p>${vid.views} • ${vid.time}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                    <!-- Add extra dummy cards to enable scrolling -->
-                    ${shuffled.map(vid => `
-                        <div class="video-card" onclick="openPlayer('${vid.title}')">
-                            <div class="thumbnail-container">
-                                <img src="${vid.thumb}" loading="lazy" alt="${vid.title}">
-                                <span class="duration">${vid.duration}</span>
-                            </div>
-                            <div class="video-info">
-                                <img src="https://ui-avatars.com/api/?name=${vid.user}&background=random" class="uploader-pic">
-                                <div class="video-details">
-                                    <h4>${vid.title}</h4>
-                                    <p>${vid.user}</p>
-                                    <p>${vid.views} • ${vid.time}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        container.innerHTML += rowHTML;
-    });
+            `;
+            return;
+        }
 
+        // POPULATED STATE (The 5 Categories)
+        container.innerHTML = `
+            <div class="video-category"><h2>Your Suggestions</h2><div class="video-row" id="row-suggestions"></div></div>
+            <div class="video-category"><h2>Top Favourites</h2><div class="video-row" id="row-favourites"></div></div>
+            <div class="video-category"><h2>Daily</h2><div class="video-row" id="row-daily"></div></div>
+            <div class="video-category"><h2>Newly Added</h2><div class="video-row" id="row-new"></div></div>
+            <div class="video-category"><h2>Want Another Like ${recentlyWatchedVideoName}?, Watch These!</h2><div class="video-row" id="row-similar"></div></div>
+        `;
+        
+        // Later: Logic to loop through activeVideos and append to these rows goes here
+    };
+
+    renderVideos();
 });
 
-// --- 3. UI Helpers ---
-// Row Scrolling function (Global so buttons can access it)
-window.scrollRow = function(rowId, amount) {
-    const row = document.getElementById(rowId);
-    row.scrollBy({ left: amount, behavior: 'smooth' });
-};
-
-// Open/Close Video Player Modal
-window.openPlayer = function(title = "Cyberpunk: Edge of the Web") {
-    document.getElementById('playerTitle').innerText = title;
-    const modal = document.getElementById('playerModal');
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-    
-    // Auto-play the dummy video
-    const video = document.getElementById('mainVideoPlayer');
-    if(video) video.play();
-};
-
+// Modal Logic
+window.openPlayer = function() {
+    document.getElementById('playerModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
 window.closePlayer = function() {
     const modal = document.getElementById('playerModal');
-    modal.classList.add('hidden');
-    document.body.style.overflow = 'auto'; // Restore scrolling
-
-    // Pause video
     const video = document.getElementById('mainVideoPlayer');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
     if(video) video.pause();
-};
+}
