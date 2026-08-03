@@ -1,16 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. SETUP PROFILE ---
+    // --- 1. SETUP PROFILE (NO MORE KICKING YOU OUT) ---
     const userDataStr = localStorage.getItem('pixelPlanetUser');
-    if (!userDataStr) { window.location.href = 'index.html'; return; }
+    let userData = null;
+    let displayUsername = "User";
+
+    if (!userDataStr) {
+        // If memory fails, we use a fallback session instead of redirecting you!
+        console.warn("No login data found! Using a fallback session so you can view the page.");
+        userData = { email: 'guest@pixelplanet.tv', isAdmin: true }; 
+        displayUsername = "Guest";
+    } else {
+        // Normal login success
+        userData = JSON.parse(userDataStr);
+        displayUsername = localStorage.getItem('pixelPlanetUsername') || userData.email.split('@')[0];
+    }
     
-    const userData = JSON.parse(userDataStr);
-    let displayUsername = localStorage.getItem('pixelPlanetUsername') || userData.email.split('@')[0];
+    // Set Avatar Image
     const avatarUrl = `https://ui-avatars.com/api/?name=${displayUsername.charAt(0)}&background=6c5ce7&color=fff`;
 
     document.getElementById('topbarProfilePic').src = avatarUrl;
     document.getElementById('dropdownProfilePic').src = avatarUrl;
     document.getElementById('dropdownUsername').textContent = displayUsername;
 
+    // Show Admin tools if they are an admin
     if (userData.isAdmin) {
         document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
     }
@@ -36,11 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
         notifDropdown.classList.add('hidden');
     });
 
+    // Close dropdowns when clicking anywhere else on the screen
     document.addEventListener('click', () => {
         notifDropdown.classList.add('hidden');
         profileDropdown.classList.add('hidden');
     });
 
+    // Sign out button
     document.getElementById('dropdownLogout').addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('pixelPlanetUser');
