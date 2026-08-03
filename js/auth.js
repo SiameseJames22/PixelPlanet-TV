@@ -1,25 +1,16 @@
+import { submitAuthForm, loginWithGoogle } from './firebase-auth.js';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
-    const toggleText = document.getElementById('toggleText');
+    const authForm = document.getElementById('authForm');
     const toggleAuthModeBtn = document.getElementById('toggleAuthMode');
     const authSubtitle = document.getElementById('authSubtitle');
     const submitBtn = document.getElementById('submitBtn');
-    const authForm = document.getElementById('authForm');
+    const toggleText = document.getElementById('toggleText');
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
-
-    // UI Groups
     const signupOnlyFields = document.querySelectorAll('.signup-only');
-    const loginOnlyFields = document.querySelectorAll('.login-only');
 
-    // State
     let isLoginMode = true;
-
-    // Hardcoded Admin List
-    const ADMIN_EMAILS = [
-        'robloxworld607@gmail.com',
-        'jamesw3468@outlook.com'
-    ];
 
     // Toggle Password Visibility
     if (togglePassword) {
@@ -30,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Toggle Between Login and Sign Up (Safely updating text without destroying the element)
+    // Toggle Login / Sign Up UI Mode
     if (toggleAuthModeBtn) {
         toggleAuthModeBtn.addEventListener('click', () => {
             isLoginMode = !isLoginMode;
@@ -38,92 +29,47 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isLoginMode) {
                 authSubtitle.textContent = "Welcome back!";
                 submitBtn.textContent = "Sign In";
-                toggleText.firstChild.textContent = "Don't have an account? ";
-                toggleAuthModeBtn.textContent = "Sign Up";
-                
-                signupOnlyFields.forEach(field => field.style.display = 'none');
-                loginOnlyFields.forEach(field => field.style.display = 'block');
+                toggleText.innerHTML = `Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span>`;
+                signupOnlyFields.forEach(f => f.style.display = 'none');
             } else {
                 authSubtitle.textContent = "Create an account to start watching.";
                 submitBtn.textContent = "Sign Up";
-                toggleText.firstChild.textContent = "Already have an account? ";
-                toggleAuthModeBtn.textContent = "Sign In";
-                
-                signupOnlyFields.forEach(field => {
-                    field.style.display = 'block';
-                    field.style.animation = 'fadeIn 0.4s ease-out forwards';
-                });
-                loginOnlyFields.forEach(field => field.style.display = 'none');
+                toggleText.innerHTML = `Already have an account? <span class="accent-link" id="toggleAuthMode">Sign In</span>`;
+                signupOnlyFields.forEach(f => f.style.display = 'block');
             }
+            
+            // Re-bind listener to the newly generated inner HTML link
+            document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthModeBtn.click);
         });
     }
 
-    // Handle Form Submission
+    // Handle Form Submit (Email / Password)
     if (authForm) {
-        authForm.addEventListener('submit', (e) => {
+        authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe') ? document.getElementById('rememberMe').checked : false;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput ? usernameInput.value.trim() : '';
 
-            // Basic validation
-            if (email === '' || password === '') {
-                alert('Please fill out all required fields.');
-                return;
-            }
-
-            // Sign-up Specific Logic
-            if (!isLoginMode) {
-                const usernameInput = document.getElementById('username');
-                const username = usernameInput ? usernameInput.value.trim() : '';
-                const confirmInput = document.getElementById('confirmPassword');
-                const confirm = confirmInput ? confirmInput.value : '';
-                
-                // Mock "Taken Username" check
-                const takenUsernames = ['admin', 'pixelplanet', 'james', 'robloxworld'];
-                if (takenUsernames.includes(username.toLowerCase())) {
-                    alert("That username is already taken! Please choose another one.");
-                    return;
-                }
-
-                if (password !== confirm) {
-                    alert("Passwords do not match!");
-                    return;
-                }
-                
-                // Save username for the profile picture later
-                localStorage.setItem('pixelPlanetUsername', username);
-                console.log("Registering user:", username);
-            }
-
-            // Check if user is an Administrator
-            let isAdmin = false;
-            if (ADMIN_EMAILS.includes(email)) {
-                isAdmin = true;
-                console.log("Administrator Access Granted.");
-            }
-
-            // Save session locally
-            const userSession = {
-                email: email,
-                isAdmin: isAdmin,
-                theme: 'dark' // Default theme setting
-            };
-
-            if (rememberMe) {
-                localStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
-            } else {
-                sessionStorage.setItem('pixelPlanetUser', JSON.stringify(userSession));
-            }
-
-            // Button Animation before redirect
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
             
-            setTimeout(() => {
-                // Redirects to the main dashboard
-                window.location.href = 'home.html'; 
-            }, 1500);
+            try {
+                await submitAuthForm(email, password, isLoginMode, username);
+            } catch (err) {
+                submitBtn.innerHTML = isLoginMode ? "Sign In" : "Sign Up";
+            }
         });
     }
+
+    // Handle Google Continue Buttons
+    const googleBtns = document.querySelectorAll('.btn-social');
+    googleBtns.forEach(btn => {
+        if (btn.textContent.includes('Google')) {
+            btn.addEventListener('click', async () => {
+                await loginWithGoogle();
+            });
+        }
+    });
 });
