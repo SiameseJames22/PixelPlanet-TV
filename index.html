@@ -25,12 +25,80 @@
     </nav>
 
     <!-- Main Authentication Container -->
-    <main class="auth-wrapper">
-        <div class="glass-card auth-card">
-            <div class="card-header">
-                <h2 class="brand-logo-large">PixelPlanet <span>TV</span></h2>
-                <p id="authSubtitle">Welcome back!</p>
+   <div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="card-header">
+            <h1 class="brand-logo-large">PixelPlanet TV</h1>
+            <p id="authSubtitle">Welcome back!</p>
+        </div>
+
+        <form id="authForm" class="auth-form">
+            <!-- Username (Sign Up Only) -->
+            <div class="input-group signup-only" style="display: none;">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="username" placeholder="Choose a username">
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.4rem;">We will never ask for your real name!</p>
             </div>
+
+            <!-- Email (Both) -->
+            <div class="input-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <!-- Password (Both) -->
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <i class="fa-solid fa-eye eye-icon" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <!-- Confirm Password (Sign Up Only) -->
+            <div class="input-group signup-only" style="display: none;">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                </div>
+            </div>
+
+            <!-- Remember Me / Forgot Password (Login Only) -->
+            <div class="auth-options login-only">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe"> Remember Me
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-primary full-width" style="padding: 0.85rem; background: var(--accent-color); border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; margin-top: 10px;">Sign In</button>
+        </form>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <div class="social-login">
+            <button class="btn-social">
+                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continue with Google
+            </button>
+            <button class="btn-social">
+                <i class="fa-brands fa-discord" style="color: #5865F2;"></i> Continue with Discord
+            </button>
+        </div>
+
+        <!-- Keep this exact formatting on one line for the JS to work properly -->
+        <div class="auth-footer" id="toggleText">Don't have an account? <span class="accent-link" id="toggleAuthMode">Sign Up</span></div>
+    </div>
+</div>
 
          <!-- Username (Hidden on Login) -->
                 <div class="input-group signup-only" style="display: none;">
