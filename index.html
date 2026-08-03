@@ -1,6 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- FORCED AUTH STYLES TO FIX SQUASHED LAYOUT -->
+    <style>
+        .auth-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            width: 100%;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            background: #1a1a24;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex !important;
+            flex-direction: column !important; /* Forces vertical stacking */
+            gap: 1.5rem;
+        }
+        .auth-form {
+            display: flex !important;
+            flex-direction: column !important; /* Forces inputs to stack */
+            gap: 1.25rem;
+        }
+        .social-login {
+            display: flex !important;
+            flex-direction: column !important; /* Forces buttons to stack */
+            gap: 0.75rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a0a0b0;
+            font-size: 0.85rem;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            color: #a0a0b0;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            background: #252530;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
+        }
+        .btn-primary {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-social {
+            background: #252530;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .auth-footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #a0a0b0;
+        }
+        .accent-link {
+            color: #6c5ce7;
+            cursor: pointer;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PixelPlanet TV - Stream Your World</title>
