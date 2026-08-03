@@ -1,43 +1,29 @@
-// js/nav.js
 document.addEventListener('DOMContentLoaded', () => {
+    // Select all links in the sidebar
+    const navLinks = document.querySelectorAll('.nav-menu a, .sidebar-footer a');
     
-    // 1. Handle Navbar "Sign In" button on index.html
-    const navSignInBtn = document.getElementById('navSignInBtn');
-    if (navSignInBtn) {
-        navSignInBtn.addEventListener('click', () => {
-            // Scroll smoothly down to the auth form
-            document.querySelector('.auth-wrapper').scrollIntoView({ behavior: 'smooth' });
-        });
-    }
-
-    // 2. Sidebar Navigation Routing & Active States
-    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-    const sidebarLinks = document.querySelectorAll('.nav-menu li a');
-
-    sidebarLinks.forEach(link => {
-        // Get the filename the link points to
-        const linkPath = link.getAttribute('href');
-
-        // If the link matches the current page URL, make it active
-        if (linkPath === currentPath) {
-            // Remove active class from all
-            document.querySelectorAll('.nav-menu li').forEach(li => li.classList.remove('active'));
-            // Add to current
-            link.parentElement.classList.add('active');
-        }
-    });
-
-    // 3. Sidebar Mobile Toggle
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.querySelector('.sidebar');
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', () => {
-            if (sidebar.style.transform === 'translateX(0px)') {
-                sidebar.style.transform = 'translateX(-100%)';
-            } else {
-                sidebar.style.transform = 'translateX(0px)';
+    navLinks.forEach(link => {
+        link.addEventListener('click', async (e) => {
+            const href = link.getAttribute('href');
+            
+            // Ignore empty links or same-page anchor tags
+            if(!href || href === '#' || href === 'home.html') return; 
+            
+            e.preventDefault(); // Stop normal click
+            
+            try {
+                // Ping the server to see if the HTML file actually exists
+                const response = await fetch(href, { method: 'HEAD' });
+                
+                if (response.ok) {
+                    window.location.href = href; // File exists, go to it!
+                } else {
+                    window.location.href = '404.html'; // File missing, trigger 404!
+                }
+            } catch (error) {
+                // If the check completely fails (like a network error), default to 404
+                window.location.href = '404.html';
             }
         });
-    }
+    });
 });
